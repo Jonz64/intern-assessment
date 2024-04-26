@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+</head>
+<body>
+    <h1>User Management</h1>
+
+    <div id="createSection">
+        <!-- Form to create a new user -->
+        <h2>Create User</h2>
+        <form onsubmit="event.preventDefault(); createUser();">
+            <input type="text" id="usernameInput" placeholder="Enter username" required>
+            <button type="submit">Create User</button>
+        </form>
+    </div>
+
+    <div id="readSection">
+        <!-- Section to display the list of users -->
+        <h2>Read Users</h2>
+        <ul id="userList"></ul>
+        <button onclick="readUsers()">Read Users</button>
+    </div>
+
+    <div id="updateSection">
+        <!-- Form to update a user -->
+        <h2>Update User</h2>
+        <form onsubmit="event.preventDefault(); updateUser();">
+            <input type="text" id="userIdInput" placeholder="Enter user ID">
+            <input type="text" id="newUsernameInput" placeholder="Enter new username">
+            <button type="submit">Update User</button>
+        </form>
+    </div>
+
+    <div id="deleteSection">
+        <!-- Form to delete a user -->
+        <h2>Delete User</h2>
+        <form onsubmit="event.preventDefault(); deleteUser();">
+            <input type="text" id="userIdToDelete" placeholder="Enter user ID to delete">
+            <button type="submit">Delete User</button>
+        </form>
+    </div>
+
+    <script>
+        // CRUD operations
+
+        function createUser() {
+            const username = document.getElementById('usernameInput').value;
+            if (username) {
+                fetch('/users', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username }),
+                })
+                .then(response => response.json())
+                .then(newUser => {
+                    alert(`User "${newUser.username}" created successfully!`);
+                    // Optionally, update the user list on the UI
+                    readUsers();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while creating the user.');
+                });
+            }
+        }
+
+        function readUsers() {
+            fetch('/users')
+            .then(response => response.json())
+            .then(users => {
+                const userListElement = document.getElementById('userList');
+                userListElement.innerHTML = ''; // Clear previous user list
+                
+                users.forEach(user => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = user.username;
+                    userListElement.appendChild(listItem);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while fetching users.');
+            });
+        }
+
+        function updateUser() {
+            const userId = document.getElementById('userIdInput').value;
+            const newUsername = document.getElementById('newUsernameInput').value;
+            if (userId && newUsername) {
+                fetch(`/users/${userId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username: newUsername }),
+                })
+                .then(response => response.json())
+                .then(updatedUser => {
+                    alert(`User ID ${userId} updated successfully! New username: ${updatedUser.username}`);
+                    // Optionally, update the user list on the UI
+                    readUsers();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while updating the user.');
+                });
+            }
+        }
+
+        function deleteUser() {
+            const userId = document.getElementById('userIdToDelete').value;
+            if (userId) {
+                fetch(`/users/${userId}`, {
+                    method: 'DELETE',
+                })
+                .then(() => {
+                    alert(`User ID ${userId} deleted successfully!`);
+                    // Optionally, update the user list on the UI
+                    readUsers();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while deleting the user.');
+                });
+            }
+        }
+    </script>
+</body>
+</html>
