@@ -24,3 +24,10 @@ application using the chosen framework.
 Version Control and Collaboration:
 Submit all code to a GitHub repository. Include clear commit messages, and
 ensure proper documentation for setup and usage.
+
+
+Setup:
+1. Ensure you have Node.js installed on your machine. You can download it from the Node.js website.
+2. Clone the repository to your local machine using the following command:
+    git clone <repository-url>
+3. Navigate to the directory where the files are located.
